@@ -228,21 +228,7 @@ activity$date &lt;- as.Date(activity$date)
 </ul>
 
 <pre><code class="r">library(dplyr)
-</code></pre>
-
-<pre><code>## 
-## Attaching package: &#39;dplyr&#39;
-## 
-## The following object is masked from &#39;package:stats&#39;:
-## 
-##     filter
-## 
-## The following objects are masked from &#39;package:base&#39;:
-## 
-##     intersect, setdiff, setequal, union
-</code></pre>
-
-<pre><code class="r">mydata &lt;- na.omit(activity)
+mydata &lt;- na.omit(activity)
 c &lt;- select(mydata, steps)
 d &lt;- select(mydata, date)
 x &lt;- cbind(c,d)
@@ -272,7 +258,7 @@ print(med)
 <li>The median total number of steps taken each day: 10765</li>
 </ul>
 
-<p>###What is the average daily activity pattern?</p>
+<h3>What is the average daily activity pattern?</h3>
 
 <ul>
 <li>Calculate average steps for each of 5-minute interval during a 24-hour period.</li>
@@ -327,12 +313,14 @@ int &lt;-group_by(ab, interval) %&gt;% summarise_each(funs(mean))
 activity2 &lt;- activity
 for (i in 1:nrow(activity2)){
         if (is.na(activity2$steps[i])){
-                for(j in 1:nrow(int)){
-                        if ( int$interval[j]==activity2$interval[i])
+                for (j in 1:nrow(int)){
+                        if (int$interval[j] == activity2$interval[i]){
                                 activity2$steps[i] &lt;- int$step[j]
+                        }
                 }
         }
 }
+
 c2 &lt;- select(activity2, steps)
 d2 &lt;- select(activity2, date)
 x2 &lt;- cbind(c2,d2)
@@ -364,7 +352,7 @@ print(med2)
 <li><p>We can see that our data resembles a t-student distribution, because the impact of imputing missing values has been an increase of the central peak, but doesn&#39;t affect the other measurements and so doesn&#39;t have a great influence on our predictions.</p></li>
 </ul>
 
-<p>###Are there differences in activity patterns between weekdays and weekends?</p>
+<h3>Are there differences in activity patterns between weekdays and weekends?</h3>
 
 <ul>
 <li>Create a new factor variable in the dataset with two levels - &ldquo;weekday&rdquo; and &ldquo;weekend&rdquo; indicating whether a given date is a weekday or weekend day.</li>
@@ -380,13 +368,16 @@ Sys.setlocale(&quot;LC_TIME&quot;, &quot;English&quot;)
 
 <pre><code class="r">activity2$daytype &lt;- weekdays(as.Date(activity2$date))
 for (k in 1:nrow(activity2)){
-        if ( (activity2$daytype[k]==&quot;Sunday&quot;)
-          || (activity2$daytype[k]==&quot;Saturday&quot;)
+        if ( (activity2$daytype[k] == &quot;Sunday&quot;)
+          || (activity2$daytype[k] == &quot;Saturday&quot;)
            ){
                 activity2$daytype[k] &lt;- &quot;weekend&quot;
         }
-        else activity2$daytype[k] &lt;- &quot;weekday&quot;
+        else{
+                activity2$daytype[k] &lt;- &quot;weekday&quot;
+        }
 }
+
 wd &lt;- subset(activity2, daytype==&quot;weekend&quot;)
 wy &lt;- subset(activity2, daytype==&quot;weekday&quot;)
 wds &lt;- select(wd, steps)

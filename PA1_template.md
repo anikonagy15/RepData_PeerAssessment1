@@ -30,22 +30,6 @@ activity$date <- as.Date(activity$date)
 
 ```r
 library(dplyr)
-```
-
-```
-## 
-## Attaching package: 'dplyr'
-## 
-## The following object is masked from 'package:stats':
-## 
-##     filter
-## 
-## The following objects are masked from 'package:base':
-## 
-##     intersect, setdiff, setequal, union
-```
-
-```r
 mydata <- na.omit(activity)
 c <- select(mydata, steps)
 d <- select(mydata, date)
@@ -78,7 +62,7 @@ print(med)
 - The mean total number of steps taken each day: 10766.19
 - The median total number of steps taken each day: 10765
 
-###What is the average daily activity pattern?
+### What is the average daily activity pattern?
 
 - Calculate average steps for each of 5-minute interval during a 24-hour period.
 - Make a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
@@ -135,12 +119,14 @@ int <-group_by(ab, interval) %>% summarise_each(funs(mean))
 activity2 <- activity
 for (i in 1:nrow(activity2)){
         if (is.na(activity2$steps[i])){
-                for(j in 1:nrow(int)){
-                        if ( int$interval[j]==activity2$interval[i])
+                for (j in 1:nrow(int)){
+                        if (int$interval[j] == activity2$interval[i]){
                                 activity2$steps[i] <- int$step[j]
+                        }
                 }
         }
 }
+
 c2 <- select(activity2, steps)
 d2 <- select(activity2, date)
 x2 <- cbind(c2,d2)
@@ -176,7 +162,7 @@ print(med2)
 
 - We can see that our data resembles a t-student distribution, because the impact of imputing missing values has been an increase of the central peak, but doesn't affect the other measurements and so doesn't have a great influence on our predictions.
 
-###Are there differences in activity patterns between weekdays and weekends?
+### Are there differences in activity patterns between weekdays and weekends?
 
 - Create a new factor variable in the dataset with two levels - "weekday" and "weekend" indicating whether a given date is a weekday or weekend day.
 - Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis). 
@@ -194,13 +180,16 @@ Sys.setlocale("LC_TIME", "English")
 ```r
 activity2$daytype <- weekdays(as.Date(activity2$date))
 for (k in 1:nrow(activity2)){
-        if ( (activity2$daytype[k]=="Sunday")
-          || (activity2$daytype[k]=="Saturday")
+        if ( (activity2$daytype[k] == "Sunday")
+          || (activity2$daytype[k] == "Saturday")
            ){
                 activity2$daytype[k] <- "weekend"
         }
-        else activity2$daytype[k] <- "weekday"
+        else{
+                activity2$daytype[k] <- "weekday"
+        }
 }
+
 wd <- subset(activity2, daytype=="weekend")
 wy <- subset(activity2, daytype=="weekday")
 wds <- select(wd, steps)
