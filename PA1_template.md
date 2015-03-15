@@ -15,7 +15,8 @@ This document presents the results of the Reproducible Research's Peer Assessmen
 - Load input data from a zip file from the current R working directory
 - Convert date to date data type
 
-```{r, echo=TRUE}
+
+```r
 activity <- read.csv("activity.csv")
 activity$date <- as.Date(activity$date)
 ```
@@ -26,8 +27,25 @@ activity$date <- as.Date(activity$date)
 - Plot a histogram of the total number of steps taken each day
 - Report the mean and median total number of steps taken per day
 
-```{r, echo=TRUE}
+
+```r
 library(dplyr)
+```
+
+```
+## 
+## Attaching package: 'dplyr'
+## 
+## The following object is masked from 'package:stats':
+## 
+##     filter
+## 
+## The following objects are masked from 'package:base':
+## 
+##     intersect, setdiff, setequal, union
+```
+
+```r
 mydata <- na.omit(activity)
 c <- select(mydata, steps)
 d <- select(mydata, date)
@@ -35,10 +53,26 @@ x <- cbind(c,d)
 y <- group_by(x, date) %>% summarise_each(funs(sum))
 newY <- sapply(y$steps, as.numeric)
 hist(newY, main=" The total number of steps taken each day", xlab="Number of steps", col="yellow", breaks=53)
+```
+
+![plot of chunk unnamed-chunk-2](figure/unnamed-chunk-2-1.png) 
+
+```r
 m <- mean(newY)
 print(m)
+```
+
+```
+## [1] 10766.19
+```
+
+```r
 med <- median(newY)
 print(med)
+```
+
+```
+## [1] 10765
 ```
 
 - The mean total number of steps taken each day: 10766.19
@@ -50,16 +84,23 @@ print(med)
 - Make a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
 - Report which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?    
 
-```{r, echo=TRUE}
+
+```r
 ws <- select(mydata, steps)
 wi <- select (mydata, interval)
 w <- cbind(ws,wi)
 hg <- group_by(w, interval) %>% summarise_each(funs(mean))
 plot(x=hg$interval, y=hg$steps, type="l", col="blue",xlab="Interval", ylab="Number of Steps", main="")
-     
 ```
-```{r, echo=TRUE}
+
+![plot of chunk unnamed-chunk-3](figure/unnamed-chunk-3-1.png) 
+
+```r
         hg$interval[which.max(hg$steps)]        
+```
+
+```
+## [1] 835
 ```
 
 - The 835th 5-minute interval contains the maximum number of steps.
@@ -72,17 +113,22 @@ plot(x=hg$interval, y=hg$steps, type="l", col="blue",xlab="Interval", ylab="Numb
 - Calculate and report the mean and median total number of steps taken per day.
 - Make following comments: Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
 
-```{r, echo=TRUE}
+
+```r
 sum(is.na(activity))
-        
-``` 
+```
+
+```
+## [1] 2304
+```
 
 - The total number of missing values in the dataset: 2304
 
 
 I calculate the mean/median for the particular interval (from all days) and fill in all of the missing values in the dataset and create a new dataset.
 
-```{r, echo=TRUE}
+
+```r
 a <- select(mydata, interval)
 ab <- cbind(a,c)
 int <-group_by(ab, interval) %>% summarise_each(funs(mean))
@@ -101,10 +147,26 @@ x2 <- cbind(c2,d2)
 y2 <- group_by(x2, date) %>% summarise_each(funs(sum))
 newY2 <- sapply(y2$steps, as.numeric)
 hist(newY2, main=" The total number of steps taken each day", xlab="Number of steps", col="red", breaks=53)
+```
+
+![plot of chunk unnamed-chunk-6](figure/unnamed-chunk-6-1.png) 
+
+```r
 m2 <- mean(newY2)
 print(m2)
+```
+
+```
+## [1] 10766.19
+```
+
+```r
 med2 <- median(newY2)
 print(med2)
+```
+
+```
+## [1] 10766.19
 ```
 
 - The new mean total number of steps taken per day: 10766.19
@@ -119,9 +181,17 @@ print(med2)
 - Create a new factor variable in the dataset with two levels - "weekday" and "weekend" indicating whether a given date is a weekday or weekend day.
 - Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis). 
 
-```{r, echo=TRUE}
+
+```r
 library(dplyr)
 Sys.setlocale("LC_TIME", "English")
+```
+
+```
+## [1] "English_United States.1252"
+```
+
+```r
 activity2$daytype <- weekdays(as.Date(activity2$date))
 for (k in 1:nrow(activity2)){
         if ( (activity2$daytype[k]=="Sunday")
@@ -153,5 +223,7 @@ p <- xyplot(steps ~ interval | factor(daytype), data=df,
             ylab="Average Number of Steps Taken")
 print (p)    
 ```
+
+![plot of chunk unnamed-chunk-7](figure/unnamed-chunk-7-1.png) 
 
 - Are there differences in activity patterns between weekdays and weekends? Yes. The plot indicates that the person moves around more (or more active) during the weekend days.
